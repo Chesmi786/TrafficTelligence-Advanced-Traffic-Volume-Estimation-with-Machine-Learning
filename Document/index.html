@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TrafficTelligence: Real-Time Traffic Volume Estimator</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: url('https://images.unsplash.com/photo-1504384308090-c894fdcc538d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80') no-repeat center center fixed;
+      background-size: cover;
+      position: relative;
+    }
+    body::before {
+      content: "";
+      position: absolute;
+      top:0; left:0; right:0; bottom:0;
+      background: rgba(0,0,0,0.5);
+      z-index:0;
+    }
+    .container {
+      position: relative;
+      max-width: 800px;
+      margin: 60px auto;
+      background: rgba(255,255,255,0.95);
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      z-index: 1;
+      animation: fadeIn 1s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity:0; transform: translateY(-10px);}
+      to { opacity:1; transform: translateY(0);}
+    }
+    h1 {
+      color: #2c3e50;
+      font-size: 28px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    h1::before {
+      content: "🚦";
+      font-size: 30px;
+    }
+    p {
+      color: #555;
+      margin-bottom: 20px;
+    }
+    label {
+      font-weight: 600;
+      color: #333;
+      display: block;
+      margin-top: 15px;
+    }
+    input, select {
+      padding: 12px;
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+      box-sizing: border-box;
+      transition: border-color 0.3s;
+    }
+    input:focus, select:focus {
+      border-color: #2980b9;
+      outline: none;
+    }
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 14px;
+      background-color: #2980b9;
+      color: white;
+      font-size: 18px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+    button:hover {
+      background-color: #3498db;
+      transform: translateY(-2px);
+    }
+    .output-box {
+      margin-top: 30px;
+      padding: 20px;
+      background: #ecf0f1;
+      border-left: 5px solid #2980b9;
+      border-radius: 6px;
+      animation: fadeIn 0.5s ease;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>TrafficTelligence</h1>
+    <p>Estimate real-time traffic volume based on time, weather, and conditions using our intelligent model.</p>
+
+    <form id="predictForm">
+      <label for="hour">Hour of the Day (0-23):</label>
+      <input type="number" id="hour" name="hour" min="0" max="23" required>
+
+      <label for="temperature">Temperature (°C):</label>
+      <input type="number" id="temperature" name="temperature" required>
+
+      <label for="weather">Weather Condition:</label>
+      <select id="weather" name="weather">
+        <option value="Clear">Clear</option>
+        <option value="Clouds">Clouds</option>
+        <option value="Rain">Rain</option>
+        <option value="Snow">Snow</option>
+        <option value="Fog">Fog</option>
+      </select>
+
+      <label for="isHoliday">Is it a Holiday?</label>
+      <select id="isHoliday" name="isHoliday">
+        <option value="0">No</option>
+        <option value="1">Yes</option>
+      </select>
+
+      <button type="submit">Predict Traffic Volume</button>
+    </form>
+
+    <div class="output-box" id="output"></div>
+  </div>
+
+  <script>
+    document.getElementById('predictForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const hour = parseInt(document.getElementById('hour').value);
+      const temp = parseFloat(document.getElementById('temperature').value);
+      const weather = document.getElementById('weather').value;
+      const isHoliday = parseInt(document.getElementById('isHoliday').value);
+
+      let baseVolume = 4000;
+
+      if ((hour >= 7 && hour <= 9) || (hour >= 17 && hour <= 19)) baseVolume += 2000;
+      if (weather === 'Rain' || weather === 'Snow') baseVolume -= 500;
+      if (isHoliday === 1) baseVolume -= 1500;
+      baseVolume += (temp > 30 ? -300 : 0);
+
+      const volume = Math.max(1000, Math.round(baseVolume + Math.random() * 300));
+      document.getElementById('output').innerHTML = `<h2>Estimated Traffic Volume:</h2><p><strong>${volume} vehicles/hour</strong></p>`;
+    });
+  </script>
+</body>
+</html>
